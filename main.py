@@ -50,6 +50,11 @@ def load_datasets():
         with open(ignore_keywords_path, 'r', encoding='utf-8') as f:
             datasets['ignore_keywords'] = json.load(f)
 
+        # 加载采购内容数据集
+        item_filter_path = ITEM_DATASET
+        with open(item_filter_path, 'r', encoding='utf-8') as f:
+            datasets['item_filter'] = json.load(f)
+
     except FileNotFoundError as e:
         print(f"[错误] 加载数据集失败: {e}")
         return None
@@ -151,16 +156,34 @@ def extract_entity(text, entity_keywords, ignore_keywords):
     # 否则：所有关键词都没有匹配项，返回None
     return None
 
+# 查找“招标信息”中第一个出现的采购内容并返回项目名称
+def extract_item(text, item_filter_data):
+    if not text or not item_filter_data:
+        return None
+
+    # 遍历项目名称（键）
+    for item_name, keywords in item_filter_data.items():
+        # 遍历每个项目名称对应的关键词列表
+        for keyword in keywords:
+            # 查找文本中第一个出现的关键词
+            if keyword in text:
+                # 找到匹配项，返回项目名称
+                return item_name
+
+    # 否则：所有关键词都没有匹配项，返回None
+    return None
+
 
 # 主要处理逻辑
 def process_excel(input_path, output_path, datasets):
-    if not datasets or 'locations' not in datasets or 'entity_keywords' not in datasets or 'ignore_keywords' not in datasets:
+    if not datasets or 'locations' not in datasets or 'entity_keywords' not in datasets or 'ignore_keywords' not in datasets or 'item_filter' not in datasets:
         print("[错误] 数据集未加载或不完整，程序退出。")
         return
 
     location_data = datasets['locations']
     entity_keywords = datasets.get('entity_keywords', [])
     ignore_keywords = datasets.get('ignore_keywords', [])
+    item_filter_data = datasets.get('item_filter', {}) # Corrected variable name
 
     try:
         # 读取Excel文件中的所有工作表
@@ -247,6 +270,11 @@ def process_excel(input_path, output_path, datasets):
                         str(tender_info), entity_keywords, ignore_keywords)
                     if entity:
                         df.at[index, '施工方'] = entity
+
+                    # 提取项目名称
+                    item_name = extract_item(str(tender_info), item_filter_data)
+                    if item_name:
+                        df.at[index, '项目名称'] = item_name
 
             processed_sheets[sheet_name] = df
 
