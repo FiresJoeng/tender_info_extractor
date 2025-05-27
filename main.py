@@ -6,7 +6,8 @@ import pandas as pd
 import json
 
 
-# 数据集路径配置
+# 数据集全局路径配置
+# 提示：如果需要更精确的匹配数据，可以先在文件夹搓好简单键值对JSON，然后在下面的字典里添加。
 LOCATION_DATASETS = {
     '省市': 'data/locations/province_city.json',
     '省市简': 'data/locations/province_city_short.json',
@@ -15,6 +16,7 @@ LOCATION_DATASETS = {
 
 
 # 数据集匹配优先级设置
+# 提示：如果添加了新的JSON路径后**不要忘记**然后在下面的列表里添加它，否则可能会产生一些没有测试过的问题。
 location_types = ['省市', '省市简', '省']
 
 
@@ -31,8 +33,8 @@ def load_location_data():
     return location_data
 
 
-# 查找最后出现的地理位置并返回省份
-def find_province(text, location_data):
+# 查找“招标信息”中最后出现的地理位置并返回省份
+def locate_province(text, location_data):
     if not text or not location_data:
         return None
 
@@ -130,7 +132,7 @@ def process_excel(input_path, output_path, location_data):
             for index, row in df.iterrows():
                 tender_info = row[tender_info_col]
                 if pd.notna(tender_info):  # 检查单元格是否为空
-                    province = find_province(str(tender_info), location_data)
+                    province = locate_province(str(tender_info), location_data)
                     if province:
                         df.at[index, '所属省份'] = province
 
