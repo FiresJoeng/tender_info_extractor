@@ -9,6 +9,7 @@ TODO.txt
 ~$*
 *.tmp
 *.bak
+temp*
 
 # Ignore test files
 docs/output/
