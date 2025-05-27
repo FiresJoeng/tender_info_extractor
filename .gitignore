@@ -1,0 +1,11 @@
+# Ignore cache files
+__pycache__/
+*.pyc
+
+# Ignore TODO files
+TODO.txt
+
+# Ignore temp files
+~$*
+*.tmp
+*.bak
