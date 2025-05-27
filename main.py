@@ -8,12 +8,16 @@ import json
 
 
 # 数据集全局路径配置
-# 提示：如果需要更精确的匹配数据，可以先在文件夹搓好简单键值对JSON，然后在下面的字典里添加。
 LOCATION_DATASETS = {
-    '省市': 'data/location/province_city.json',
-    '省市简': 'data/location/province_city_short.json',
-    '省': 'data/location/province.json'
-}
+    '省市': 'data/location/province_city_list.json',
+    '省市简': 'data/location/province_city_list_short.json',
+    '省': 'data/location/province_list.json'
+}  # 提示：如果需要更精确的匹配数据，可以先在文件夹搓好简单键值对JSON，然后在下面的字典里添加。
+
+ENTITY_KEYWORD_DATASET = 'data/entity/entity_keywords.json'
+IGNORE_KEYWORD_DATASET = 'data/entity/ignore_keywords.json'
+
+ITEM_DATASET = 'data/item/item_fliter.json'
 
 
 # “地理位置”数据集匹配优先级设置
@@ -37,12 +41,12 @@ def load_datasets():
         datasets['locations'] = location_data
 
         # 加载主体关键词数据集
-        entity_keywords_path = 'data/entity/entity_keywords.json'
+        entity_keywords_path = ENTITY_KEYWORD_DATASET
         with open(entity_keywords_path, 'r', encoding='utf-8') as f:
             datasets['entity_keywords'] = json.load(f)
 
         # 加载屏蔽关键词数据集
-        ignore_keywords_path = 'data/entity/ignore_keywords.json'
+        ignore_keywords_path = IGNORE_KEYWORD_DATASET
         with open(ignore_keywords_path, 'r', encoding='utf-8') as f:
             datasets['ignore_keywords'] = json.load(f)
 
